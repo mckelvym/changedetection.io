@@ -1,6 +1,6 @@
 services:
     changedetection:
-      image: ghcr.io/dgtlmoon/changedetection.io
+      image: ghcr.io/dgtlmoon/changedetection.io:0.54.7
       container_name: changedetection
       hostname: changedetection
       volumes:
@@ -93,7 +93,7 @@ services:
       # Comment out ports: when using behind a reverse proxy , enable networks: etc.
       # Mac users! Use "127.0.0.1:5050:5000" (port 5050) so theres no conflict with Airplay etc. (https://github.com/dgtlmoon/changedetection.io/issues/3401)
       ports:
-        - 127.0.0.1:5000:5000
+        - 0.0.0.0:5000:5000
       restart: unless-stopped
 
      # Used for fetching pages via WebDriver+Chrome where you need Javascript support.
@@ -142,6 +142,26 @@ services:
 #            # See https://github.com/SeleniumHQ/docker-selenium#quick-start
 #            - /dev/shm:/dev/shm
 #        restart: unless-stopped
+
+      environment:
+        - PLAYWRIGHT_DRIVER_URL=ws://playwright-chrome:3000/?stealth=1&--disable-web-security=true
+
+    playwright-chrome:
+        hostname: playwright-chrome
+        image: browserless/chrome:1.61-chrome-stable
+        restart: unless-stopped
+        environment:
+            - SCREEN_WIDTH=1920
+            - SCREEN_HEIGHT=1024
+            - SCREEN_DEPTH=16
+            - ENABLE_DEBUGGER=false
+            - PREBOOT_CHROME=true
+            - CONNECTION_TIMEOUT=300000
+            - MAX_CONCURRENT_SESSIONS=10
+            - CHROME_REFRESH_TIME=600000
+            - DEFAULT_BLOCK_ADS=false
+            - DEFAULT_STEALTH=true
+            - DEFAULT_IGNORE_HTTPS_ERRORS=true
 
 volumes:
   changedetection-data:
